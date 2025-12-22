@@ -42,6 +42,7 @@ async def process_ticket_with_ai(ticket_id: int):
                 ticket.status = TicketStatus.ESCALATED
             else:
                 print("AI Agent: High confidence. Suggesting response (TODO).", flush=True)
+                ticket.status = TicketStatus.SOLVED
             
             db.add(ticket)
             await db.commit()

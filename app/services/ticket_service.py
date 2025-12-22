@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.sql import case
 from app.models.ticket import Ticket, TicketStatus
-from app.schemas.ticket import TicketCreate
+from app.schemas.ticket import TicketCreate, TicketUpdate
 from datetime import datetime
 
 async def create_ticket(db: AsyncSession, ticket: TicketCreate):
@@ -36,6 +36,20 @@ async def update_ticket_feedback(db: AsyncSession, ticket_id: int, is_satisfied:
         db.add(ticket)
         await db.commit()
         await db.refresh(ticket)
+    return ticket
+
+async def update_ticket(db: AsyncSession, ticket_id: int, ticket_update: TicketUpdate):
+    ticket = await get_ticket(db, ticket_id)
+    if not ticket:
+        return None
+    
+    update_data = ticket_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(ticket, key, value)
+        
+    db.add(ticket)
+    await db.commit()
+    await db.refresh(ticket)
     return ticket
 
 async def get_analytics_stats(db: AsyncSession):

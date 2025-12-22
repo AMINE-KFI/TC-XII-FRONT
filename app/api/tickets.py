@@ -63,6 +63,17 @@ async def read_ticket(ticket_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Ticket not found")
     return db_ticket
 
+@router.put("/{ticket_id}", response_model=ticket_schemas.Ticket)
+async def update_ticket(
+    ticket_id: int, 
+    ticket_update: ticket_schemas.TicketUpdate, 
+    db: AsyncSession = Depends(get_db)
+):
+    updated_ticket = await ticket_service.update_ticket(db, ticket_id=ticket_id, ticket_update=ticket_update)
+    if not updated_ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    return updated_ticket
+
 @router.post("/{ticket_id}/feedback", response_model=ticket_schemas.Ticket)
 async def submit_feedback(
     ticket_id: int, 

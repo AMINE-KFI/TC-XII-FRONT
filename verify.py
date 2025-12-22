@@ -75,6 +75,15 @@ async def main():
                 else:
                     print(f"Feedback failed: {r.status_code} {r.text}")
                 
+                # Update Status to RESOLVED
+                print("Updating Status to Resolved...")
+                update_payload = {"status": "Resolved"}
+                r = await client.put(f"/tickets/{ticket_id}", json=update_payload)
+                if r.status_code == 200:
+                     print(f"Status Updated: {r.json()['status']}")
+                else:
+                     print(f"Status Update Failed: {r.status_code} {r.text}")
+
                 # Check Stats
                 print("Checking Admin Stats...")
                 r = await client.get("/admin/stats/") # Trailing slash due to previous redirect discovery
