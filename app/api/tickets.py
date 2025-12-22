@@ -69,7 +69,12 @@ async def submit_feedback(
     feedback: ticket_schemas.TicketFeedback,
     db: AsyncSession = Depends(get_db)
 ):
-    updated_ticket = await ticket_service.update_ticket_feedback(db, ticket_id, feedback.satisfaction_score)
+    updated_ticket = await ticket_service.update_ticket_feedback(
+        db, 
+        ticket_id, 
+        feedback.is_satisfied,
+        feedback.feedback_reason
+    )
     if not updated_ticket:
          raise HTTPException(status_code=404, detail="Ticket not found")
     return updated_ticket

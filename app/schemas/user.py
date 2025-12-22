@@ -9,21 +9,24 @@ class UserRole(str, Enum):
 
 class UserBase(BaseModel):
     email: EmailStr
+    full_name: Optional[str] = None
+    role: UserRole = UserRole.CLIENT
+    is_over_18: bool = False
 
 class UserCreate(UserBase):
     password: str
-    role: Optional[UserRole] = UserRole.CLIENT
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
     password: Optional[str] = None
-    is_active: Optional[bool] = None
     role: Optional[UserRole] = None
+    is_active: Optional[bool] = None
+    is_over_18: Optional[bool] = None
 
 class User(UserBase):
     id: int
     is_active: bool
-    role: UserRole
 
     class Config:
         from_attributes = True

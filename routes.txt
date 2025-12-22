@@ -4,6 +4,9 @@ ROUTE: /docs/oauth2-redirect swagger_ui_redirect
 ROUTE: /redoc redoc_html
 ROUTE: /users/ create_user
 ROUTE: /users/ read_users
+ROUTE: /users/{user_id} read_user
+ROUTE: /users/{user_id} update_user
+ROUTE: /users/{user_id} delete_user
 ROUTE: /tickets/me read_my_tickets
 ROUTE: /tickets/escalated read_escalated_tickets
 ROUTE: /tickets/ read_tickets

@@ -28,10 +28,11 @@ async def get_ticket(db: AsyncSession, ticket_id: int):
     result = await db.execute(select(Ticket).where(Ticket.id == ticket_id))
     return result.scalars().first()
 
-async def update_ticket_feedback(db: AsyncSession, ticket_id: int, satisfaction_score: int):
+async def update_ticket_feedback(db: AsyncSession, ticket_id: int, is_satisfied: bool, feedback_reason: str | None):
     ticket = await get_ticket(db, ticket_id)
     if ticket:
-        ticket.satisfaction_score = satisfaction_score
+        ticket.is_satisfied = is_satisfied
+        ticket.feedback_reason = feedback_reason
         db.add(ticket)
         await db.commit()
         await db.refresh(ticket)

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, ForeignKey, DateTime, Float, Enum
+from sqlalchemy import String, Integer, ForeignKey, DateTime, Float, Enum, Boolean
 from datetime import datetime
 from app.models.base import Base
 import enum
@@ -18,7 +18,8 @@ class Ticket(Base):
     description: Mapped[str] = mapped_column(String)
     status: Mapped[TicketStatus] = mapped_column(Enum(TicketStatus), default=TicketStatus.OPEN)
     ai_confidence_score: Mapped[float] = mapped_column(Float, default=0.0)
-    satisfaction_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    is_satisfied: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    feedback_reason: Mapped[str | None] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     closed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     

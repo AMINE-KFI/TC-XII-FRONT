@@ -26,13 +26,15 @@ class TicketUpdate(BaseModel):
     closed_at: Optional[datetime] = None
 
 class TicketFeedback(BaseModel):
-    satisfaction_score: int
+    is_satisfied: bool
+    feedback_reason: Optional[str] = None
 
 class Ticket(TicketBase):
     id: int
     status: TicketStatus
     ai_confidence_score: float
-    satisfaction_score: Optional[int] = None
+    is_satisfied: Optional[bool] = None
+    feedback_reason: Optional[str] = None
     created_at: datetime
     closed_at: Optional[datetime] = None
     customer_id: int
