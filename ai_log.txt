@@ -1,2 +1,4 @@
 Processing ticket 1
 Finished ticket 1 with score 0.8252445490633356
+Processing ticket 2
+Finished ticket 2 with score 0.7767049215787349

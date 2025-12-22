@@ -23,6 +23,8 @@ async def read_my_tickets(
     """
     return await ticket_service.get_tickets_by_user(db, user_id=current_user.id, skip=skip, limit=limit)
 
+
+
 @router.get("/escalated", response_model=List[ticket_schemas.Ticket])
 async def read_escalated_tickets(
     skip: int = 0, 
