@@ -1,0 +1,2 @@
+Processing ticket 1
+Finished ticket 1 with score 0.8252445490633356

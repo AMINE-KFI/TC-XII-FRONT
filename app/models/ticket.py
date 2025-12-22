@@ -18,7 +18,9 @@ class Ticket(Base):
     description: Mapped[str] = mapped_column(String)
     status: Mapped[TicketStatus] = mapped_column(Enum(TicketStatus), default=TicketStatus.OPEN)
     ai_confidence_score: Mapped[float] = mapped_column(Float, default=0.0)
+    satisfaction_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     agent_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)

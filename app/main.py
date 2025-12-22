@@ -14,6 +14,10 @@ async def lifespan(app: FastAPI):
     # Create tables on startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    
+    with open("routes.txt", "w") as f:
+        for route in app.routes:
+            f.write(f"ROUTE: {route.path} {route.name}\n")
     yield
 
 app = FastAPI(
@@ -33,7 +37,7 @@ app.add_middleware(
 
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(tickets.router, prefix="/tickets", tags=["tickets"])
-app.include_router(analytics_api.router, prefix="/analytics", tags=["analytics"])
+app.include_router(analytics_api.router, prefix="/admin", tags=["analytics"])
 
 @app.get("/")
 async def root():
