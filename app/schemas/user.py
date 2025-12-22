@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     full_name: Optional[str] = None
     role: UserRole = UserRole.CLIENT
     is_over_18: bool = False
+    receives_updates: bool = False
 
 class UserCreate(UserBase):
     password: str
@@ -23,6 +24,7 @@ class UserUpdate(BaseModel):
     role: Optional[UserRole] = None
     is_active: Optional[bool] = None
     is_over_18: Optional[bool] = None
+    receives_updates: Optional[bool] = None
 
 class User(UserBase):
     id: int

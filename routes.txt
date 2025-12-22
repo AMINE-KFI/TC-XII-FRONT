@@ -2,6 +2,7 @@ ROUTE: /api/v1/openapi.json openapi
 ROUTE: /docs swagger_ui_html
 ROUTE: /docs/oauth2-redirect swagger_ui_redirect
 ROUTE: /redoc redoc_html
+ROUTE: /login/access_token login_access_token
 ROUTE: /users/ create_user
 ROUTE: /users/ read_users
 ROUTE: /users/{user_id} read_user

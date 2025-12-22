@@ -8,3 +8,5 @@ Processing ticket 1
 Finished ticket 1 with score 0.6285413606140352
 Processing ticket 2
 Finished ticket 2 with score 0.46096499304943966
+Processing ticket 1
+ERROR: type object 'TicketStatus' has no attribute 'SOLVED'

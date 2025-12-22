@@ -7,7 +7,8 @@ from app.core.database import engine
 from app.models.base import Base
 # Import models to ensure they are registered with Base
 from app.models import user, ticket, analytics
-from app.api import users, tickets, analytics as analytics_api
+from app.api import users, tickets, auth
+from app.api import analytics as analytics_api
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,6 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router, tags=["login"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(tickets.router, prefix="/tickets", tags=["tickets"])
 app.include_router(analytics_api.router, prefix="/admin", tags=["analytics"])
