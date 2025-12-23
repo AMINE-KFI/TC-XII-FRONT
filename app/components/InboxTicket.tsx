@@ -34,7 +34,7 @@ export default function InboxTicket() {
   const confirmCloseTicket = (status: 'Résolu' | 'Non résolu' | 'En attente') => {
     const updatedTickets = tickets.map(t => 
         t.id === selectedTicket.id 
-        ? { ...t, status: 'Résolu', priority: status === 'Non résolu' ? 'Critique' : 'Basse' } 
+        ? { ...t, status: 'Résolu' } // J'ai retiré la mise à jour de la priorité ici aussi car elle n'est plus affichée
         : t
     )
     setTickets(updatedTickets)
@@ -89,7 +89,11 @@ export default function InboxTicket() {
             <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <div className="flex items-center gap-4">
                     <button onClick={() => setSelectedTicket(null)} className="p-2 hover:bg-white rounded-full border border-transparent hover:border-gray-200 transition-all text-gray-500"><ArrowLeftIcon className="w-5 h-5" /></button>
-                    <div><h3 className="font-bold text-gray-900">{selectedTicket.subject}</h3><p className="text-xs text-gray-500">Client: {selectedTicket.client} • Priorité: {selectedTicket.priority}</p></div>
+                    <div>
+                        <h3 className="font-bold text-gray-900">{selectedTicket.subject}</h3>
+                        {/* Suppression de l'affichage de la priorité ici */}
+                        <p className="text-xs text-gray-500">Client: {selectedTicket.client}</p>
+                    </div>
                 </div>
                 <button onClick={() => setShowCloseModal(true)} className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-[#141516] text-white text-sm font-bold rounded-xl hover:bg-black transition-all shadow-md">Clôturer le ticket</button>
                 {/* Bouton mobile pour clôturer (icône seulement) */}
@@ -144,7 +148,7 @@ export default function InboxTicket() {
                 </div>
                 <div className="md:col-span-3 flex items-center gap-2">
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${ticket.status === 'Nouveau' ? 'bg-blue-50 text-blue-600' : ticket.status === 'En cours' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'}`}>{ticket.status}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${ticket.priority === 'Critique' ? 'border-red-200 text-red-600 bg-red-50' : ticket.priority === 'Haute' ? 'border-orange-200 text-orange-600 bg-orange-50' : 'border-gray-200 text-gray-500'}`}>{ticket.priority}</span>
+                  {/* Suppression de l'affichage de la priorité dans la liste */}
                 </div>
                 <div className="md:col-span-3 text-right hidden md:block"><p className="text-xs font-bold text-gray-900">{ticket.client}</p><p className="text-[10px] text-gray-400">{ticket.date}</p></div>
               </div>

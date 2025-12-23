@@ -9,11 +9,11 @@ import {
 // DONNÉES (MOCK DATA) SPÉCIFIQUES À ALL TICKETS
 // ============================================================================
 const allTicketsList = [
-  { id: 'TKT-1024', subject: 'Erreur Paiement', client: 'Amine Benali', priority: 'Haute', status: 'Nouveau', date: '22/12/2025', agent: 'IA' },
-  { id: 'TKT-1025', subject: 'Accès compte bloqué', client: 'Sophie Martin', priority: 'Moyenne', status: 'En cours', date: '21/12/2025', agent: 'John Smith' },
-  { id: 'TKT-1026', subject: 'Bug affichage mobile', client: 'Karim Ziani', priority: 'Basse', status: 'Résolu', date: '20/12/2025', agent: 'IA' },
-  { id: 'TKT-1027', subject: 'Facture manquante', client: 'Tech Corp', priority: 'Moyenne', status: 'Résolu', date: '19/12/2025', agent: 'John Smith' },
-  { id: 'TKT-1028', subject: 'API Key invalide', client: 'Lina Dou', priority: 'Critique', status: 'Nouveau', date: '22/12/2025', agent: '-' },
+  { id: 'TKT-1024', subject: 'Erreur Paiement', client: 'Amine Benali', status: 'Nouveau', date: '22/12/2025', agent: 'IA' },
+  { id: 'TKT-1025', subject: 'Accès compte bloqué', client: 'Sophie Martin', status: 'En cours', date: '21/12/2025', agent: 'John Smith' },
+  { id: 'TKT-1026', subject: 'Bug affichage mobile', client: 'Karim Ziani', status: 'Résolu', date: '20/12/2025', agent: 'IA' },
+  { id: 'TKT-1027', subject: 'Facture manquante', client: 'Tech Corp', status: 'Résolu', date: '19/12/2025', agent: 'John Smith' },
+  { id: 'TKT-1028', subject: 'API Key invalide', client: 'Lina Dou', status: 'Nouveau', date: '22/12/2025', agent: '-' },
 ]
 
 export default function AllTicket() {
@@ -37,11 +37,6 @@ export default function AllTicket() {
       if (s === 'Nouveau') return 'bg-blue-50 text-blue-700'
       if (s === 'En cours') return 'bg-orange-50 text-orange-700'
       return 'bg-green-50 text-green-700'
-  }
-
-  const getPriorityColor = (p: string) => {
-      if (p === 'Critique' || p === 'Haute') return 'text-red-600 bg-red-50'
-      return 'text-gray-600 bg-gray-50'
   }
 
   return (
@@ -74,7 +69,6 @@ export default function AllTicket() {
                           <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">ID</th>
                           <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Sujet</th>
                           <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Client</th>
-                          <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Priorité</th>
                           <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Statut</th>
                           <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Agent</th>
                       </tr>
@@ -85,11 +79,6 @@ export default function AllTicket() {
                               <td className="px-6 py-4 text-xs font-mono text-gray-500">{ticket.id}</td>
                               <td className="px-6 py-4 font-bold text-gray-900 text-sm">{ticket.subject}</td>
                               <td className="px-6 py-4 text-sm text-gray-600">{ticket.client}</td>
-                              <td className="px-6 py-4">
-                                  <span className={`px-2 py-1 rounded border text-[10px] font-bold uppercase ${getPriorityColor(ticket.priority)}`}>
-                                      {ticket.priority}
-                                  </span>
-                              </td>
                               <td className="px-6 py-4">
                                   <span className={`px-3 py-1 rounded-full border text-xs font-bold ${getStatusColor(ticket.status)}`}>
                                       {ticket.status}
