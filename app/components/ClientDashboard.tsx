@@ -1,79 +1,233 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { 
-  PaperAirplaneIcon, 
-  TicketIcon, 
-  ListBulletIcon, 
   CheckCircleIcon, 
-  UserIcon,
-  CpuChipIcon
+  ChevronDownIcon,
+  ClockIcon,
+  ChatBubbleLeftRightIcon,
+  FunnelIcon,
+  XMarkIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+  InboxIcon,
+  ComputerDesktopIcon,
+  CreditCardIcon,
+  UserGroupIcon,
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline'
 
-// ... (Gardez vos composants TicketForm et FullPageChat inchangés ici) ...
-// Je remets les composants TicketForm et FullPageChat pour que le code soit complet et copiable.
-
 // ============================================================================
-// 1. COMPOSANT FORMULAIRE
+// 1. TICKET FORM COMPONENT
 // ============================================================================
 function TicketForm({ onTicketCreated }: { onTicketCreated: (data: any) => void }) {
   const [subject, setSubject] = useState('')
-  const [category, setCategory] = useState('Technique')
+  const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
+
+  const categories = [
+    { id: 'Technique', icon: ComputerDesktopIcon, label: 'Technical' },
+    { id: 'Facturation', icon: CreditCardIcon, label: 'Billing' },
+    { id: 'Compte', icon: UserGroupIcon, label: 'Account' },
+  ]
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if(!subject || !description) return
+    if(!subject || !description || !category) return
     onTicketCreated({ subject, category, description })
+    setSubject('')
+    setCategory('')
+    setDescription('')
   }
 
   return (
-    <div className="bg-white p-8 md:p-12 rounded-3xl border border-gray-100 shadow-sm max-w-3xl mx-auto transition-all duration-500">
-      <div className="mb-8">
-         <h2 className="text-3xl font-bold mb-3 text-[#141516]">Décrivez votre problème</h2>
-         <p className="text-gray-500">Remplissez ce formulaire pour qu'un agent (IA ou humain) prenne en charge votre demande immédiatement.</p>
+    <div className="bg-white -mt-10 p-12 rounded-[2.5rem] border border-gray-200 shadow-sm max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-10 text-center">
+         <h2 className="text-4xl font-black mb-4 text-[#04093D]">Hello, how can we help you?</h2>
+         <p className="text-slate-500 max-w-md mx-auto font-medium">Create a support ticket by describing your issue below.</p>
       </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-8" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Sujet de la demande</label>
+          <label className="block text-sm font-bold text-[#04093D] mb-2 ml-1 uppercase tracking-wider">Topic</label>
           <input 
             type="text" 
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FCEE21] focus:border-transparent outline-none transition-all font-medium" 
-            placeholder="Ex: Impossible de me connecter..." 
+            className="w-full bg-[#F8F9FB] border-2 border-transparent focus:border-[#FCEE21] rounded-2xl px-6 py-4 outline-none transition-all text-[#04093D] font-bold placeholder:text-slate-400" 
+            placeholder="What is this about?" 
             required
           />
         </div>
-        
+
         <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Catégorie</label>
-            <select 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FCEE21] outline-none transition-all font-medium"
-            >
-                <option>Technique</option>
-                <option>Facturation</option>
-                <option>Compte</option>
-                <option>Autre</option>
-            </select>
+            <label className="block text-sm font-bold text-[#04093D] mb-4 ml-1 uppercase tracking-wider">Select Category</label>
+            <div className="grid grid-cols-3 gap-4">
+                {categories.map((cat) => (
+                    <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setCategory(cat.id)}
+                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 ${
+                            category === cat.id 
+                            ? 'border-[#FCEE21] bg-[#FCEE21]/10 scale-105 shadow-md' 
+                            : 'border-slate-100 bg-[#F8F9FB] hover:border-slate-200 text-slate-400'
+                        }`}
+                    >
+                        <cat.icon className={`w-8 h-8 mb-2 ${category === cat.id ? 'text-[#04093D]' : 'text-slate-400'}`} />
+                        <span className={`text-xs font-black ${category === cat.id ? 'text-[#04093D]' : 'text-slate-500'}`}>{cat.label}</span>
+                    </button>
+                ))}
+            </div>
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Description détaillée</label>
+          <label className="block text-sm font-bold text-[#04093D] mb-2 ml-1 uppercase tracking-wider">Description</label>
           <textarea 
-            rows={5} 
+            rows={4} 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FCEE21] outline-none transition-all font-medium resize-none" 
-            placeholder="Expliquez nous ce qui se passe..."
+            className="w-full bg-[#F8F9FB] border-2 border-transparent focus:border-[#FCEE21] rounded-2xl px-6 py-4 outline-none transition-all text-[#04093D] font-bold placeholder:text-slate-400 resize-none" 
+            placeholder="Add more details..."
             required
           ></textarea>
         </div>
 
-        <button type="submit" className="w-full bg-[#FCEE21] text-black font-bold py-4 rounded-xl hover:bg-[#e6d91e] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-lg mt-4">
-          Lancer l'assistance
+        <div className="flex justify-center pt-4">
+            <button 
+                type="submit" 
+                disabled={!category || !subject || !description}
+                className="bg-[#FCEE21] text-[#04093D] font-black py-4 px-20 rounded-full hover:bg-[#efdf1a] hover:shadow-xl active:scale-95 transition-all text-lg disabled:opacity-50"
+            >
+              SUBMIT TICKET
+            </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+// ============================================================================
+// 2. INTERACTIVE CHATBOT COMPONENT
+// ============================================================================
+function TicketChat({ ticket, onBackToHistory }: { ticket: any, onBackToHistory: () => void }) {
+  const [messages, setMessages] = useState([
+    { role: 'user', content: `[SYSTEM: TICKET OPENED]\nTopic: ${ticket.subject}\nCategory: ${ticket.category}` }
+  ])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+    if (messages.length === 1) {
+      triggerBotResponse("initial")
+    }
+  }, [messages, isTyping])
+
+  const triggerBotResponse = (userText: string) => {
+    setIsTyping(true)
+    
+    // Artificial Delay
+    setTimeout(() => {
+      let response = ""
+      const text = userText.toLowerCase()
+
+      if (userText === "initial") {
+        response = `Hello! I've logged your ${ticket.category} request under ID #${ticket.id}. Our team usually responds within 2 hours. Do you have any other details to add?`
+      } else if (text.includes("status") || text.includes("check")) {
+        response = "Your ticket status is currently 'PENDING'. A support specialist is being assigned right now."
+      } else if (text.includes("human") || text.includes("agent")) {
+        response = "I can certainly escalate this. Would you like me to flag this as 'URGENT' for a human agent?"
+      } else if (text.includes("thanks") || text.includes("thank you")) {
+        response = "You're very welcome! Is there anything else I can help you with today?"
+      } else {
+        response = "I've noted that down for the team. They will see your message as soon as they open the ticket."
+      }
+
+      setMessages(prev => [...prev, { role: 'assistant', content: response }])
+      setIsTyping(false)
+    }, 1800)
+  }
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim() || isTyping) return
+    
+    const userMsg = input
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }])
+    setInput('')
+    triggerBotResponse(userMsg)
+  }
+
+  return (
+    <div className="bg-white rounded-[3.5rem] shadow-2xl border border-slate-100 flex flex-col h-[750px] max-w-4xl mx-auto overflow-hidden animate-in zoom-in duration-500">
+      {/* Header */}
+      <div className="bg-[#002BFF] p-8 text-white flex justify-between items-center shadow-lg relative z-10">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 bg-[#FCEE21] rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6">
+            <ChatBubbleLeftRightIcon className="w-8 h-8 text-[#04093D]" />
+          </div>
+          <div>
+            <p className="font-black text-xl tracking-tighter">AI SUPPORT AGENT</p>
+            <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <p className="text-xs font-bold text-white/70 uppercase tracking-widest">Online • Ticket #{ticket.id}</p>
+            </div>
+          </div>
+        </div>
+        <button 
+            onClick={onBackToHistory} 
+            className="bg-white text-[#002BFF] px-6 py-3 rounded-full text-sm font-black hover:bg-[#FCEE21] hover:text-[#04093D] transition-all shadow-md active:scale-95"
+        >
+          VIEW ALL TICKETS
+        </button>
+      </div>
+
+      {/* Message Area */}
+      <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-[#F8F9FB] scrollbar-hide">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
+            <div className={`max-w-[75%] p-6 rounded-[2rem] font-bold text-lg shadow-sm leading-relaxed ${
+              msg.role === 'user' 
+              ? 'bg-[#04093D] text-white rounded-tr-none' 
+              : 'bg-white text-[#04093D] rounded-tl-none border-2 border-slate-100'
+            }`}>
+              {msg.content}
+            </div>
+          </div>
+        ))}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white p-5 rounded-[2rem] rounded-tl-none border-2 border-slate-100 flex gap-2">
+              <span className="w-3 h-3 bg-[#002BFF]/30 rounded-full animate-bounce"></span>
+              <span className="w-3 h-3 bg-[#002BFF]/60 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+              <span className="w-3 h-3 bg-[#002BFF] rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </div>
+          </div>
+        )}
+        <div ref={scrollRef} />
+      </div>
+
+      {/* Input Field */}
+      <form onSubmit={handleSend} className="p-8 bg-white border-t-2 border-slate-50 flex gap-4 items-center">
+        <input 
+          type="text" 
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about your status, or type 'agent'..." 
+          className="flex-1 bg-[#F8F9FB] border-2 border-transparent focus:border-[#FCEE21] rounded-[1.5rem] px-8 py-5 outline-none font-bold text-[#04093D] placeholder:text-slate-400 transition-all text-lg"
+        />
+        <button 
+            type="submit"
+            disabled={isTyping}
+            className="bg-[#002BFF] p-5 rounded-2xl text-white hover:bg-[#04093D] hover:scale-110 transition-all shadow-xl disabled:opacity-30"
+        >
+          <PaperAirplaneIcon className="w-7 h-7" />
         </button>
       </form>
     </div>
@@ -81,210 +235,95 @@ function TicketForm({ onTicketCreated }: { onTicketCreated: (data: any) => void 
 }
 
 // ============================================================================
-// 2. COMPOSANT CHAT
+// 3. HISTORY VIEW
 // ============================================================================
-function FullPageChat({ ticketData, onResolve }: { ticketData: any, onResolve: () => void }) {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: `Bonjour 👋. J'ai bien reçu votre ticket concernant "${ticketData.subject}". Je suis l'assistant virtuel DOXA. Laissez-moi analyser votre problème...` }
-  ])
-  const [inputValue, setInputValue] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const [agentMode, setAgentMode] = useState<'ai' | 'human'>('ai')
-  const messagesEndRef = useRef<null | HTMLDivElement>(null)
-
-  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
-  useEffect(() => { scrollToBottom() }, [messages, isTyping])
-
-  const handleSend = async () => {
-    if (!inputValue.trim()) return
-    const userMsg = { id: Date.now(), sender: 'user', text: inputValue }
-    setMessages(prev => [...prev, userMsg])
-    const currentInput = inputValue
-    setInputValue('')
-    setIsTyping(true)
-
-    setTimeout(() => {
-      setIsTyping(false)
-      if (agentMode === 'ai') {
-        if (currentInput.toLowerCase().includes('humain') || currentInput.toLowerCase().includes('agent') || messages.length > 3) {
-            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'system', text: '⚠️ L\'assistant IA transmet le dossier à un expert...' }])
-            setTimeout(() => {
-                setAgentMode('human')
-                setMessages(prev => [...prev, { id: Date.now() + 2, sender: 'human', text: 'Bonjour, je suis Sarah, experte technique chez Doxa. Je viens de lire votre dossier. Je reprends la main sur la conversation.' }])
-            }, 2000)
-        } else {
-            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'ai', text: 'Je comprends. D\'après notre base de connaissances, avez-vous essayé de vérifier vos paramètres de compte ?' }])
-        }
-      } else {
-        setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'human', text: 'Je vérifie cela tout de suite dans notre base de données.' }])
-      }
-    }, 1500)
-  }
+function HistoryView({ tickets, onDelete, onNavigateToAdd }: { tickets: any[], onDelete: (id: string) => void, onNavigateToAdd: () => void }) {
+  const [searchTerm, setSearchTerm] = useState('')
+  const processedTickets = useMemo(() => {
+    return tickets.filter(t => t.id.includes(searchTerm)).sort((a, b) => b.id.localeCompare(a.id))
+  }, [tickets, searchTerm])
 
   return (
-    <div className="flex flex-col h-[calc(100vh-160px)] bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
-      <div className={`p-4 px-6 border-b flex justify-between items-center transition-colors duration-500 ${agentMode === 'human' ? 'bg-[#714BD2] text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="flex items-center gap-4">
-             <div className="relative">
-                <div className={`w-3 h-3 rounded-full absolute bottom-0 right-0 border-2 border-white ${agentMode === 'human' ? 'bg-green-400' : 'bg-[#FCEE21]'}`}></div>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-sm ${agentMode === 'human' ? 'bg-white/20' : 'bg-white border'}`}>
-                    {agentMode === 'ai' ? <CpuChipIcon className="w-6 h-6" /> : <UserIcon className="w-6 h-6" />}
-                </div>
-             </div>
-             <div>
-                <h3 className="font-bold text-lg leading-tight">{agentMode === 'ai' ? 'Doxa Assistant' : 'Sarah (Expert Doxa)'}</h3>
-                <p className={`text-xs ${agentMode === 'human' ? 'text-white/80' : 'text-gray-500'}`}>{agentMode === 'ai' ? 'Intelligence Artificielle' : 'Support Premium • En ligne'}</p>
-             </div>
-        </div>
-        <button onClick={onResolve} className={`text-xs font-bold border px-4 py-2 rounded-full transition-colors ${agentMode === 'human' ? 'border-white/30 hover:bg-white/10' : 'border-gray-300 hover:bg-gray-100'}`}>Fermer le ticket</button>
+    <div className="animate-in fade-in duration-700 max-w-5xl mx-auto">
+      <div className="flex items-center gap-4 mb-8">
+        <h2 className="text-5xl font-black text-[#04093D] tracking-tight">History</h2>
+        <div className="bg-[#FCEE21] text-[#04093D] px-4 py-1 rounded-full font-black text-xl">{processedTickets.length}</div>
       </div>
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F9FAFB]">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.sender === 'system' ? (
-                <div className="w-full flex items-center gap-4 my-4 opacity-75">
-                    <div className="h-px bg-gray-300 flex-1"></div>
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center gap-2">{msg.text}</p>
-                    <div className="h-px bg-gray-300 flex-1"></div>
-                </div>
-            ) : (
-                <div className={`max-w-[80%] p-5 rounded-2xl text-sm shadow-sm leading-relaxed ${
-                    msg.sender === 'user' ? 'bg-[#141516] text-white rounded-tr-none' : msg.sender === 'human' ? 'bg-white border border-[#714BD2] text-gray-800 rounded-tl-none border-l-4' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none'
-                }`}>{msg.text}</div>
-            )}
+
+      <div className="bg-[#002BFF] rounded-3xl px-8 py-4 flex justify-between items-center mb-8 shadow-2xl">
+        <div className="flex items-center gap-4 flex-1 max-w-md">
+          <MagnifyingGlassIcon className="w-6 h-6 text-white/50" />
+          <input 
+            type="text"
+            placeholder="Search Ticket ID..."
+            className="bg-transparent border-none text-white placeholder:text-white/40 focus:ring-0 w-full text-xl font-bold"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="bg-[#E9EBF0] rounded-[3.5rem] p-10 min-h-[500px] flex flex-col shadow-inner">
+        {tickets.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <InboxIcon className="w-20 h-20 text-[#002BFF] mb-6 opacity-20" />
+            <h3 className="text-3xl font-black text-[#04093D] mb-8">No tickets found</h3>
+            <button onClick={onNavigateToAdd} className="bg-[#002BFF] text-white px-12 py-4 rounded-full font-black text-lg">CREATE TICKET</button>
           </div>
-        ))}
-        {isTyping && (
-             <div className="flex items-center gap-1 text-gray-400 text-sm ml-2 bg-white px-4 py-3 rounded-2xl w-fit border border-gray-100 shadow-sm">
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
-             </div>
+        ) : (
+          <div className="w-full">
+            <table className="w-full border-separate border-spacing-y-6">
+              <thead>
+                <tr className="text-[#002BFF] font-black text-2xl"><th className="text-left px-8">TICKET</th><th className="text-right px-8 pr-48">STATUS</th><th className="w-20"></th></tr>
+              </thead>
+              <tbody>
+                {processedTickets.map((ticket) => (
+                  <tr key={ticket.id} className="group hover:translate-x-2 transition-all">
+                    <td className="py-8 px-10 bg-white/60 rounded-l-[2.5rem] text-[#04093D] font-black text-2xl">#{ticket.id}</td>
+                    <td className="py-8 px-10 bg-white/60 text-right"><div className="flex justify-end pr-10"><div className="h-14 w-48 rounded-full shadow-inner border-4 border-white flex items-center justify-center font-black text-xs tracking-widest uppercase bg-white text-slate-300">Pending</div></div></td>
+                    <td className="py-8 px-8 bg-white/60 rounded-r-[2.5rem] text-center"><button onClick={() => onDelete(ticket.id)} className="text-slate-300 hover:text-red-500 transition-all"><XMarkIcon className="w-10 h-10 stroke-[2]" /></button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="p-4 bg-white border-t border-gray-100">
-        <div className="flex gap-3">
-            <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder="Écrivez votre message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-[#714BD2] focus:bg-white transition-all shadow-inner"/>
-            <button onClick={handleSend} disabled={!inputValue.trim()} className="p-4 bg-[#FCEE21] text-black rounded-xl hover:bg-[#e6d91e] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"><PaperAirplaneIcon className="w-6 h-6 -rotate-45 translate-x-[-2px] translate-y-[1px]" /></button>
-        </div>
       </div>
     </div>
   )
 }
 
 // ============================================================================
-// 3. PAGE PRINCIPALE (LAYOUT GLOBAL CORRIGÉ)
+// 4. MAIN DASHBOARD
 // ============================================================================
 export default function ClientDashboard() {
   const [view, setView] = useState<'form' | 'chat' | 'list'>('form')
   const [currentTicket, setCurrentTicket] = useState<any>(null)
+  const [tickets, setTickets] = useState<any[]>([])
 
   const handleTicketCreated = (data: any) => {
-    setCurrentTicket(data)
+    const newTicket = { id: Math.floor(1000000 + Math.random() * 9000000).toString(), ...data }
+    setTickets([newTicket, ...tickets])
+    setCurrentTicket(newTicket)
     setView('chat')
   }
 
   return (
-    // AJOUT: 'flex' sur le conteneur principal pour permettre l'alignement
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col pt-24 font-sans text-gray-900">
-      
-      {/* Container Flex pour Sidebar et Contenu */}
+    <div className="mt-20 min-h-screen bg-[#F8F9FB] flex flex-col font-sans">
       <div className="flex flex-1">
-        
-        {/* --- SIDEBAR GAUCHE --- */}
-        {/* CHANGEMENT MAJEUR ICI :
-            - Remplacement de 'fixed' par 'sticky'.
-            - top-24 : Elle colle en haut (sous la navbar).
-            - h-[calc(100vh-6rem)] : Elle prend la hauteur de l'écran moins la navbar.
-            - Comme elle est dans un flex, elle ne passera pas par-dessus le footer qui sera après ce bloc 'flex'.
-        */}
-        <aside className="w-72 bg-white border-r border-gray-200 hidden md:flex flex-col p-8 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto shrink-0">
-            
-            <div className="mb-10">
-                <h2 className="font-extrabold text-xl tracking-tight text-gray-400 uppercase text-xs mb-2">Menu Principal</h2>
-                <div className="text-2xl font-bold">DOXA <span className="text-[#714BD2]">Desk</span></div>
-            </div>
-            
-            <nav className="space-y-3 flex-1">
-            <button onClick={() => setView('form')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-200 text-left group ${view === 'form' || view === 'chat' ? 'bg-[#141516] text-white shadow-lg shadow-gray-200' : 'text-gray-500 hover:bg-gray-50 hover:text-[#714BD2]'}`}>
-                <TicketIcon className="w-6 h-6" />
-                <span>Espace Résolution</span>
-                {(view === 'form' || view === 'chat') && <span className="ml-auto w-2 h-2 rounded-full bg-[#FCEE21]"></span>}
-            </button>
-            <button onClick={() => setView('list')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-200 text-left group ${view === 'list' ? 'bg-[#141516] text-white shadow-lg shadow-gray-200' : 'text-gray-500 hover:bg-gray-50 hover:text-[#714BD2]'}`}>
-                <ListBulletIcon className="w-6 h-6" />
-                <span>Historique</span>
-            </button>
-            </nav>
-
-            <div className="mt-auto pt-6 border-t border-gray-100 flex items-center gap-3 shrink-0 opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden">
-                    <UserIcon className="w-full h-full p-2 text-gray-400" />
-                </div>
-                <div>
-                    <p className="text-sm font-bold text-gray-900">Amine Belabed</p>
-                    <p className="text-xs text-gray-400">Client Premium</p>
-                </div>
-            </div>
+        <aside className="w-80 bg-white border-r border-slate-100 hidden md:flex flex-col p-10 sticky top-0 h-screen">
+          
+          <nav className="fixed space-y-4">
+            <button onClick={() => setView('form')} className={`w-full flex items-center gap-4 px-8 py-5 rounded-[2.5rem] font-black transition-all ${view === 'form' || view === 'chat' ? 'bg-[#FCEE21] text-[#04093D] shadow-xl' : 'text-slate-300'}`}><ChatBubbleLeftRightIcon className="w-7 h-7" /> NEW TICKET</button>
+            <button onClick={() => setView('list')} className={`w-full flex items-center gap-4 px-8 py-5 rounded-[2.5rem] font-black transition-all ${view === 'list' ? 'bg-[#FCEE21] text-[#04093D] shadow-xl' : 'text-slate-300'}`}><ClockIcon className="w-7 h-7" /> HISTORY</button>
+          </nav>
         </aside>
 
-        {/* --- CONTENU PRINCIPAL --- */}
-        {/* Suppression de 'ml-72' car Flexbox gère l'espace automatiquement */}
-        <main className="flex-1 p-6 lg:p-12 transition-all duration-300 overflow-hidden">
-            <div className="max-w-5xl mx-auto h-full">
-                
-                {/* Header Mobile */}
-                <div className="md:hidden mb-8 flex justify-between items-center">
-                    <span className="font-extrabold text-xl text-gray-900">DOXA DASHBOARD</span>
-                </div>
-
-                {/* --- VUE 1 : FORMULAIRE --- */}
-                {view === 'form' && (
-                    <div className="animate-fade-in-up">
-                        <div className="mb-10 text-center md:text-left">
-                            <h1 className="text-4xl font-extrabold mb-3 text-[#141516]">Bonjour, Amine 👋</h1>
-                            <p className="text-gray-500 text-lg">Comment pouvons-nous vous aider aujourd'hui ?</p>
-                        </div>
-                        <TicketForm onTicketCreated={handleTicketCreated} />
-                    </div>
-                )}
-
-                {/* --- VUE 2 : CHAT ACTIF --- */}
-                {view === 'chat' && currentTicket && (
-                    <div className="h-full flex flex-col animate-fade-in-up">
-                        <button onClick={() => setView('form')} className="mb-4 text-sm font-bold text-gray-500 hover:text-[#714BD2] flex items-center gap-2 w-fit transition-colors">
-                            &larr; Retour au formulaire
-                        </button>
-                        <FullPageChat ticketData={currentTicket} onResolve={() => setView('list')} />
-                    </div>
-                )}
-
-                {/* --- VUE 3 : HISTORIQUE --- */}
-                {view === 'list' && (
-                    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
-                        <h2 className="text-2xl font-bold mb-8 text-[#141516]">Vos Tickets Récents</h2>
-                        <div className="space-y-4">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-gray-200 transition-all cursor-pointer group">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 p-2 bg-white rounded-lg border border-gray-200 text-gray-400 group-hover:text-[#714BD2] transition-colors">
-                                            <TicketIcon className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-lg text-gray-900 group-hover:text-[#714BD2] transition-colors">Problème de connexion #{100+i}</h4>
-                                            <p className="text-sm text-gray-500 mt-1">Fermé le 22 Dec 2025 • Catégorie: Technique</p>
-                                        </div>
-                                    </div>
-                                    <span className="mt-4 md:mt-0 bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 border border-green-200">
-                                        <CheckCircleIcon className="w-4 h-4"/> Résolu
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
+        <main className="flex-1 p-12 lg:p-20 overflow-y-auto">
+          <div className="max-w-6xl mx-auto">
+            {view === 'form' && <TicketForm onTicketCreated={handleTicketCreated} />}
+            {view === 'list' && <HistoryView tickets={tickets} onDelete={(id) => setTickets(tickets.filter(t => t.id !== id))} onNavigateToAdd={() => setView('form')} />}
+            {view === 'chat' && currentTicket && <TicketChat ticket={currentTicket} onBackToHistory={() => setView('list')} />}
+          </div>
         </main>
       </div>
     </div>
