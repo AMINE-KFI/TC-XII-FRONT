@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import ContactSection from './ContactSection';
 import Image from 'next/image'
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 
 export default function SignUpPage() {
@@ -146,34 +147,7 @@ export default function SignUpPage() {
               </div>
             </div>
 
-      {/* Header */}
-      {/* <header className="bg-white shadow-sm relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-black rounded-full mr-2 flex items-center justify-center">
-              <div className="text-xs font-bold">CS</div>
-            </div>
-            <div className="text-xs md:text-sm font-semibold">
-              <div>CLIENT</div>
-              <div>SERVICE</div>
-            </div>
-          </div>
-          <nav className="hidden md:flex space-x-8 text-sm">
-            <button className="text-gray-700 hover:text-gray-900">Services</button>
-            <button className="text-gray-700 hover:text-gray-900">Contact</button>
-          </nav>
-          <div className="flex space-x-2">
-            <button className="px-3 md:px-4 py-2 text-xs md:text-sm border border-gray-300 rounded-md hover:bg-gray-50">
-              Log in
-            </button>
-            <button className="px-3 md:px-4 py-2 text-xs md:text-sm bg-yellow-400 rounded-md hover:bg-yellow-500 font-medium">
-              Register
-            </button>
-          </div>
-        </div>
-      </header> */}
-
-      {/* Main Content */}
+      
       <main className="bg-white flex-1 max-w-2xl mx-auto px-4 py-8 md:py-12 mt-15 relative z-10 w-full">
         <div className="bg-gray-200 rounded-3xl p-8 md:p-12 shadow-lg">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-10 text-[rgb(53,68,81)]">Sign up now!</h1>
@@ -221,7 +195,7 @@ export default function SignUpPage() {
                 placeholder="Type your password"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-[#354451]"
               />
-              <p className="text-xs text-gray-500 mt-1">Must be 8 characters at least</p>
+              <p className="text-xs text-gray-500 mt-1">Must be 8 characters at least,one CAPS,one number</p>
               {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password}</p>}
             </div>
 
@@ -290,11 +264,13 @@ export default function SignUpPage() {
               </label>
             </div>
 
+          <Link href={'login'}>
             <div className="text-center pt-2">
               <button className="text-sm text-blue-600 hover:underline">
                 Already have an account?
               </button>
             </div>
+          </Link>
 
             <div className="flex items-center justify-center">
               <button
