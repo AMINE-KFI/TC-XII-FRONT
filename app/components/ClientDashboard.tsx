@@ -2,23 +2,24 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { 
   CheckCircleIcon, 
-  ChevronDownIcon,
-  ClockIcon,
   ChatBubbleLeftRightIcon,
-  FunnelIcon,
+  ClockIcon,
   XMarkIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
   MagnifyingGlassIcon,
   InboxIcon,
   ComputerDesktopIcon,
   CreditCardIcon,
   UserGroupIcon,
-  PaperAirplaneIcon
+  SparklesIcon, // Nouvelle icône pour l'IA
+  HandThumbUpIcon,
+  HandThumbDownIcon
 } from '@heroicons/react/24/outline'
 
+// ... (TicketForm reste identique, je ne le remets pas pour économiser de la place, 
+// mais assurez-vous de garder le même code pour TicketForm que vous aviez)
+
 // ============================================================================
-// 1. TICKET FORM COMPONENT
+// 1. TICKET FORM COMPONENT (Gardez votre code existant ici)
 // ============================================================================
 function TicketForm({ onTicketCreated }: { onTicketCreated: (data: any) => void }) {
   const [subject, setSubject] = useState('')
@@ -108,14 +109,13 @@ function TicketForm({ onTicketCreated }: { onTicketCreated: (data: any) => void 
 }
 
 // ============================================================================
-// 2. INTERACTIVE CHATBOT COMPONENT
+// 2. AI RESOLUTION COMPONENT (MODIFIÉ)
 // ============================================================================
 function TicketChat({ ticket, onBackToHistory }: { ticket: any, onBackToHistory: () => void }) {
-  const [messages, setMessages] = useState([
-    { role: 'user', content: `[SYSTEM: TICKET OPENED]\nTopic: ${ticket.subject}\nCategory: ${ticket.category}` }
+  const [messages, setMessages] = useState<any[]>([
+    { role: 'user', content: `Problem: ${ticket.subject}\nDetails: ${ticket.description}` }
   ])
-  const [input, setInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
+  const [status, setStatus] = useState<'analyzing' | 'proposing' | 'waiting_feedback' | 'resolved' | 'escalated'>('analyzing')
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -124,118 +124,156 @@ function TicketChat({ ticket, onBackToHistory }: { ticket: any, onBackToHistory:
 
   useEffect(() => {
     scrollToBottom()
-    if (messages.length === 1) {
-      triggerBotResponse("initial")
+  }, [messages, status])
+
+  // Simulation du processus de réflexion de l'IA au démarrage
+  useEffect(() => {
+    if (status === 'analyzing') {
+      setTimeout(() => {
+        setStatus('proposing')
+        generateAiSolution()
+      }, 3000) // 3 secondes de "réflexion"
     }
-  }, [messages, isTyping])
+  }, [])
 
-  const triggerBotResponse = (userText: string) => {
-    setIsTyping(true)
-    
-    // Artificial Delay
-    setTimeout(() => {
-      let response = ""
-      const text = userText.toLowerCase()
+  const generateAiSolution = () => {
+    let solution = ""
+    // Simulation de solutions basées sur la catégorie
+    if (ticket.category === 'Technique') {
+        solution = "Based on your technical issue logs, I've detected a synchronization error. I have reset your cache remotely. Please try restarting the application."
+    } else if (ticket.category === 'Facturation') {
+        solution = "I've analyzed your billing history. The discrepancy appears to be from the prorated charge on Oct 15th. I can generate a credit note for $12.50 to correct this immediately."
+    } else {
+        solution = "I have reviewed your account permissions. It seems your 'Admin' access was revoked by system policy #404. I can restore standard access rights now."
+    }
 
-      if (userText === "initial") {
-        response = `Hello! I've logged your ${ticket.category} request under ID #${ticket.id}. Our team usually responds within 2 hours. Do you have any other details to add?`
-      } else if (text.includes("status") || text.includes("check")) {
-        response = "Your ticket status is currently 'PENDING'. A support specialist is being assigned right now."
-      } else if (text.includes("human") || text.includes("agent")) {
-        response = "I can certainly escalate this. Would you like me to flag this as 'URGENT' for a human agent?"
-      } else if (text.includes("thanks") || text.includes("thank you")) {
-        response = "You're very welcome! Is there anything else I can help you with today?"
-      } else {
-        response = "I've noted that down for the team. They will see your message as soon as they open the ticket."
-      }
-
-      setMessages(prev => [...prev, { role: 'assistant', content: response }])
-      setIsTyping(false)
-    }, 1800)
+    setMessages(prev => [...prev, { role: 'assistant', content: solution }])
+    setStatus('waiting_feedback')
   }
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isTyping) return
-    
-    const userMsg = input
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }])
-    setInput('')
-    triggerBotResponse(userMsg)
+  const handleFeedback = (satisfied: boolean) => {
+    if (satisfied) {
+        setMessages(prev => [
+            ...prev, 
+            { role: 'user', content: '✅ Satisfied with the solution.' },
+            { role: 'assistant', content: 'Great! I\'m glad I could help. This ticket has been marked as RESOLVED and closed.' }
+        ])
+        setStatus('resolved')
+    } else {
+        setMessages(prev => [
+            ...prev, 
+            { role: 'user', content: '❌ Not satisfied.' },
+            { role: 'assistant', content: 'I understand. I am escalating this ticket (High Priority) to a human specialist immediately. They will contact you shortly.' }
+        ])
+        setStatus('escalated')
+    }
   }
 
   return (
     <div className="bg-white rounded-[3.5rem] shadow-2xl border border-slate-100 flex flex-col h-[750px] max-w-4xl mx-auto overflow-hidden animate-in zoom-in duration-500">
+      
       {/* Header */}
-      <div className="bg-[#002BFF] p-8 text-white flex justify-between items-center shadow-lg relative z-10">
+      <div className={`p-8 text-white flex justify-between items-center shadow-lg relative z-10 transition-colors duration-500 ${status === 'resolved' ? 'bg-green-500' : status === 'escalated' ? 'bg-[#04093D]' : 'bg-[#002BFF]'}`}>
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 bg-[#FCEE21] rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6">
-            <ChatBubbleLeftRightIcon className="w-8 h-8 text-[#04093D]" />
+            <SparklesIcon className="w-8 h-8 text-[#04093D]" />
           </div>
           <div>
-            <p className="font-black text-xl tracking-tighter">AI SUPPORT AGENT</p>
+            <p className="font-black text-xl tracking-tighter">AI AGENT</p>
             <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <p className="text-xs font-bold text-white/70 uppercase tracking-widest">Online • Ticket #{ticket.id}</p>
+                <span className={`w-2 h-2 rounded-full animate-pulse ${status === 'analyzing' ? 'bg-yellow-400' : 'bg-green-400'}`}></span>
+                <p className="text-xs font-bold text-white/70 uppercase tracking-widest">
+                    {status === 'analyzing' ? 'COMPUTING...' : status === 'waiting_feedback' ? 'AWAITING INPUT' : status.toUpperCase()}
+                </p>
             </div>
           </div>
         </div>
-        <button 
-            onClick={onBackToHistory} 
-            className="bg-white text-[#002BFF] px-6 py-3 rounded-full text-sm font-black hover:bg-[#FCEE21] hover:text-[#04093D] transition-all shadow-md active:scale-95"
-        >
-          VIEW ALL TICKETS
+        <button onClick={onBackToHistory} className="bg-white/20 hover:bg-white text-white hover:text-[#002BFF] px-6 py-3 rounded-full text-sm font-black transition-all backdrop-blur-sm">
+          EXIT
         </button>
       </div>
 
       {/* Message Area */}
-      <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-[#F8F9FB] scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-[#F8F9FB] scrollbar-hide relative">
+        
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
             <div className={`max-w-[75%] p-6 rounded-[2rem] font-bold text-lg shadow-sm leading-relaxed ${
               msg.role === 'user' 
-              ? 'bg-[#04093D] text-white rounded-tr-none' 
+              ? 'bg-[#04093D] text-white rounded-tr-none text-right' 
               : 'bg-white text-[#04093D] rounded-tl-none border-2 border-slate-100'
             }`}>
               {msg.content}
             </div>
           </div>
         ))}
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-white p-5 rounded-[2rem] rounded-tl-none border-2 border-slate-100 flex gap-2">
-              <span className="w-3 h-3 bg-[#002BFF]/30 rounded-full animate-bounce"></span>
-              <span className="w-3 h-3 bg-[#002BFF]/60 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-              <span className="w-3 h-3 bg-[#002BFF] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-            </div>
-          </div>
+
+        {/* LOADING ANIMATION (Le cerveau qui pense) */}
+        {status === 'analyzing' && (
+           <div className="flex justify-start animate-in fade-in duration-500">
+             <div className="bg-white p-8 rounded-[2rem] rounded-tl-none border-2 border-slate-100 flex flex-col gap-4 max-w-md shadow-lg">
+                <div className="flex items-center gap-3 text-[#002BFF] font-black uppercase tracking-widest text-xs">
+                    <SparklesIcon className="w-4 h-4 animate-spin" />
+                    Analyzing Request...
+                </div>
+                <div className="space-y-3">
+                    <div className="h-3 bg-slate-100 rounded-full w-3/4 animate-pulse"></div>
+                    <div className="h-3 bg-slate-100 rounded-full w-full animate-pulse delay-75"></div>
+                    <div className="h-3 bg-slate-100 rounded-full w-5/6 animate-pulse delay-150"></div>
+                </div>
+                <div className="text-xs text-slate-400 font-bold mt-2">Checking optimal solutions database...</div>
+             </div>
+           </div>
         )}
+
         <div ref={scrollRef} />
       </div>
 
-      {/* Input Field */}
-      <form onSubmit={handleSend} className="p-8 bg-white border-t-2 border-slate-50 flex gap-4 items-center">
-        <input 
-          type="text" 
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about your status, or type 'agent'..." 
-          className="flex-1 bg-[#F8F9FB] border-2 border-transparent focus:border-[#FCEE21] rounded-[1.5rem] px-8 py-5 outline-none font-bold text-[#04093D] placeholder:text-slate-400 transition-all text-lg"
-        />
-        <button 
-            type="submit"
-            disabled={isTyping}
-            className="bg-[#002BFF] p-5 rounded-2xl text-white hover:bg-[#04093D] hover:scale-110 transition-all shadow-xl disabled:opacity-30"
-        >
-          <PaperAirplaneIcon className="w-7 h-7" />
-        </button>
-      </form>
+      {/* Action Area (Remplaçant l'input) */}
+      <div className="p-8 bg-white border-t-2 border-slate-50 min-h-[140px] flex items-center justify-center">
+        
+        {status === 'waiting_feedback' && (
+            <div className="flex flex-col md:flex-row gap-4 w-full animate-in slide-in-from-bottom-4">
+                 <button 
+                    onClick={() => handleFeedback(true)}
+                    className="flex-1 bg-[#FCEE21] hover:bg-[#efdf1a] text-[#04093D] p-5 rounded-2xl font-black text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3 border-2 border-transparent"
+                 >
+                    <HandThumbUpIcon className="w-6 h-6" />
+                    SATISFIED
+                    <span className="text-xs font-normal opacity-70 ml-1">(Close Ticket)</span>
+                 </button>
+
+                 <button 
+                    onClick={() => handleFeedback(false)}
+                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 hover:text-red-500 p-5 rounded-2xl font-black text-lg border-2 border-slate-200 hover:border-red-200 transition-all flex items-center justify-center gap-3"
+                 >
+                    <HandThumbDownIcon className="w-6 h-6" />
+                    NOT SATISFIED
+                    <span className="text-xs font-normal opacity-70 ml-1">(Escalate)</span>
+                 </button>
+            </div>
+        )}
+
+        {(status === 'analyzing' || status === 'proposing') && (
+            <div className="text-slate-400 font-bold animate-pulse flex items-center gap-2">
+                <ClockIcon className="w-5 h-5" />
+                AI IS PROCESSING YOUR REQUEST...
+            </div>
+        )}
+
+        {(status === 'resolved' || status === 'escalated') && (
+            <div className={`w-full p-4 rounded-xl text-center font-black text-lg ${status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                SESSION ENDED
+            </div>
+        )}
+
+      </div>
     </div>
   )
 }
 
 // ============================================================================
-// 3. HISTORY VIEW
+// 3. HISTORY VIEW (Identique)
 // ============================================================================
 function HistoryView({ tickets, onDelete, onNavigateToAdd }: { tickets: any[], onDelete: (id: string) => void, onNavigateToAdd: () => void }) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -279,7 +317,7 @@ function HistoryView({ tickets, onDelete, onNavigateToAdd }: { tickets: any[], o
                 {processedTickets.map((ticket) => (
                   <tr key={ticket.id} className="group hover:translate-x-2 transition-all">
                     <td className="py-8 px-10 bg-white/60 rounded-l-[2.5rem] text-[#04093D] font-black text-2xl">#{ticket.id}</td>
-                    <td className="py-8 px-10 bg-white/60 text-right"><div className="flex justify-end pr-10"><div className="h-14 w-48 rounded-full shadow-inner border-4 border-white flex items-center justify-center font-black text-xs tracking-widest uppercase bg-white text-slate-300">Pending</div></div></td>
+                    <td className="py-8 px-10 bg-white/60 text-right"><div className="flex justify-end pr-10"><div className="h-14 w-48 rounded-full shadow-inner border-4 border-white flex items-center justify-center font-black text-xs tracking-widest uppercase bg-white text-slate-300">Closed</div></div></td>
                     <td className="py-8 px-8 bg-white/60 rounded-r-[2.5rem] text-center"><button onClick={() => onDelete(ticket.id)} className="text-slate-300 hover:text-red-500 transition-all"><XMarkIcon className="w-10 h-10 stroke-[2]" /></button></td>
                   </tr>
                 ))}
